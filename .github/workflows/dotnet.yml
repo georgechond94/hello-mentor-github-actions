@@ -32,12 +32,18 @@ jobs:
 
     - name: Test
       run: dotnet test --no-build --verbosity normal
+  release:
 
+    runs-on: ubuntu-latest
+
+    steps:
     - name: Publish
+      if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
       run: dotnet publish -c Release -o '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/${{ env.AZURE_WEBAPP_NAME }}' 
 
       # Deploy to Azure Web apps
     - name: 'Run Azure webapp deploy action using publish profile credentials'
+      if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
       uses: azure/webapps-deploy@v2
       with: 
         app-name: ${{ env.AZURE_WEBAPP_NAME }} # Replace with your app name
